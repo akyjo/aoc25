@@ -12,32 +12,21 @@ fn main () {
         }).fold(0, |mut acc, range| 
         {
             let digits = (range.0.ilog(10) + 1, range.1.ilog(10) + 1);
-            dbg!(range, digits);
-            let ev_n_digits = (digits.0.is_multiple_of(2) , digits.1.is_multiple_of(2) );
-            let dub_d = |x, y| (x as f64 / 10.0_f64.powi(y as i32)).floor();
             let pad_d = |x, y| {
-                let half = dub_d(x,y);
-                (half * 10.0_f64.powi(y as i32) + half) as u64
+                x * 10u64.pow(y) + x
             };
-            let doubled = (pad_d(range.0, digits.0 / 2), pad_d(range.1, digits.1 / 2));
-            dbg!(doubled);
+            let lower = digits.0 / 2;
+            let upper = (digits.1 / 2) + if digits.1.is_multiple_of(2) {1} else {2};
+            // dbg!(lower, upper);
 
-            match ev_n_digits {
-                (true, true) => {
-                    if doubled.0 >= range.0 && doubled.0 <= range.1 { acc+=doubled.0; };
-                    if doubled.0 != doubled.1 && doubled.1 >= range.0 && doubled.1 <= range.1 { acc+=doubled.1; };
-                    acc
-                },
-                (false, true) =>{
-                    if doubled.1 >= range.0 && doubled.1 <= range.1 { acc+=doubled.1; };
-                    acc
-                },
-                (true, false) =>{
-                    if doubled.0 >= range.0 && doubled.0 <= range.1 { acc+=doubled.0; };
-                    acc
-                },
-                (false, false) => acc,
-            }
+            let res = (10u64.pow((lower as i32 - 1).max(0) as u32)..=(10u64.pow(upper) - 1))
+                .map(|x| pad_d(x, x.ilog(10) + 1))
+                .filter(|x| range.0 <= *x &&  *x <= range.1)
+               .sum::<u64>();
+            acc += res;
+            acc
+
         });
+
     println!("{answer}");
 }
