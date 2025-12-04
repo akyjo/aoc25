@@ -17,7 +17,6 @@ fn main () {
             };
             let lower = digits.0 / 2;
             let upper = (digits.1 / 2) + if digits.1.is_multiple_of(2) {1} else {2};
-            // dbg!(lower, upper);
 
             let res = (10u64.pow((lower as i32 - 1).max(0) as u32)..=(10u64.pow(upper) - 1))
                 .map(|x| pad_d(x, x.ilog(10) + 1))
